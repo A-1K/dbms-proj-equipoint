@@ -16,6 +16,25 @@ A full-stack **inter-university equipment marketplace** for Pakistani students, 
 
 ---
 
+## Screenshots
+
+### Home Page
+![Home Page](docs/screenshots/home.png)
+
+### Marketplace Browse Page
+![Marketplace](docs/screenshots/marketplace.png)
+
+### Product Detail Page
+![Product Detail](docs/screenshots/product-detail.png)
+
+### User Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Create Listing Form
+![Create Listing](docs/screenshots/list-item-form.png)
+
+---
+
 ## Features
 
 - **Authentication** — JWT-based register/login, bcrypt password hashing
