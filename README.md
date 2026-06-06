@@ -1,4 +1,4 @@
-# UniMarket Pakistan
+# EquiPoint Pakistan
 
 A full-stack **inter-university equipment marketplace** for Pakistani students, built with Flask, PostgreSQL, and vanilla JS. Students can list, rent, and purchase equipment across HEC-recognized universities.
 
@@ -173,6 +173,12 @@ Server starts at **http://localhost:5000**
 | Method | Endpoint       | Auth | Description                  |
 |--------|----------------|------|------------------------------|
 | POST   | `/api/reviews/` | JWT | Post a review for a rental   |
+
+---
+
+## Analytics
+
+The project includes `backend/analytics.sql`, containing PostgreSQL queries for marketplace insights such as category demand, rental revenue, seller ratings, and transaction activity.
 
 ---
 
