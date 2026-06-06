@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EquiPoint — Pakistan's Student Marketplace</title>
+<style>
+:root {
+  --green:#00843D; --green-dark:#005C2A; --green-light:#E8F5EE;
+  --accent:#FFD700; --danger:#dc3545; --warning:#f59e0b; --info:#3b82f6;
+  --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+  --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+  --gray-800:#1f2937; --gray-900:#111827;
+  --radius:12px; --shadow-sm:0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,.12); --shadow-lg:0 8px 30px rgba(0,0,0,.15);
+  --transition:.2s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
+a{color:inherit;text-decoration:none} button{cursor:pointer;font:inherit;border:none}
+input,select,textarea{font:inherit} img{max-width:100%;display:block}
+::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--gray-100)}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px}
+.hidden{display:none!important}
+.spinner{width:40px;height:40px;border:3px solid var(--gray-200);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin:40px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast-container{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+.toast{padding:12px 20px;border-radius:var(--radius);font-size:.9rem;font-weight:600;color:#fff;box-shadow:var(--shadow-lg);animation:slideIn .3s ease;max-width:340px}
+.toast.success{background:var(--green)} .toast.error{background:var(--danger)} .toast.info{background:var(--info)}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(120%)}}
+#navbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:var(--shadow-sm)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:20px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:1.3rem;font-weight:800;color:var(--green);flex-shrink:0;cursor:pointer}
+.nav-logo .flag{width:30px;height:20px;background:linear-gradient(to right,#fff 30%,#00843D 30%);border:1px solid var(--gray-200);border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:3px;font-size:9px;color:#fff}
+.nav-search{flex:1;max-width:460px;position:relative}
+.nav-search input{width:100%;padding:9px 16px 9px 42px;border:1.5px solid var(--gray-200);border-radius:24px;background:var(--gray-50);font-size:.9rem;transition:var(--transition)}
+.nav-search input:focus{outline:none;border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(0,132,61,.1)}
+.nav-search .si{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gray-400);pointer-events:none}
+.nav-links{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.nav-btn{padding:8px 16px;border-radius:20px;font-size:.88rem;font-weight:600;transition:var(--transition)}
+.nav-btn.ghost{color:var(--gray-600);background:transparent} .nav-btn.ghost:hover{background:var(--gray-100)}
+.nav-btn.primary{background:var(--green);color:#fff} .nav-btn.primary:hover{background:var(--green-dark)}
+.nav-btn.outlined{border:1.5px solid var(--gray-200);color:var(--gray-700);background:#fff} .nav-btn.outlined:hover{border-color:var(--green);color:var(--green)}
+.nav-avatar{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;cursor:pointer;flex-shrink:0}
+.page{display:none} .page.active{display:block}
+.page-container{max-width:1280px;margin:0 auto;padding:32px 24px}
+#hero{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,#00a84d 100%);color:#fff;padding:80px 24px;text-align:center}
+.hero-inner{max-width:700px;margin:0 auto}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.5px;margin-bottom:20px}
+#hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:16px}
+#hero h1 span{color:var(--accent)} #hero p{font-size:1.1rem;opacity:.9;margin-bottom:36px}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero-btn{padding:14px 30px;border-radius:30px;font-size:1rem;font-weight:700;transition:var(--transition)}
+.hero-btn.main{background:#fff;color:var(--green)} .hero-btn.main:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.hero-btn.outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)} .hero-btn.outline:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:48px;flex-wrap:wrap}
+.hero-stat strong{display:block;font-size:1.8rem;font-weight:800} .hero-stat span{font-size:.85rem;opacity:.8}
+.cat-section{background:#fff;border-bottom:1px solid var(--gray-200)}
+.cat-strip{max-width:1280px;margin:0 auto;padding:14px 24px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.cat-strip::-webkit-scrollbar{display:none}
+.cat-chip{flex-shrink:0;padding:8px 18px;border-radius:20px;font-size:.85rem;font-weight:600;background:var(--gray-100);color:var(--gray-700);border:1.5px solid transparent;transition:var(--transition);cursor:pointer}
+.cat-chip:hover{border-color:var(--green);color:var(--green);background:var(--green-light)} .cat-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.filter-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.filter-bar select{padding:9px 14px;border-radius:8px;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);font-size:.88rem;cursor:pointer}
+.filter-bar select:focus{outline:none;border-color:var(--green)}
+.filter-count{color:var(--gray-500);font-size:.9rem;margin-left:auto}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.product-card{background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200);overflow:hidden;transition:var(--transition);cursor:pointer}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--gray-300)}
+.card-img{width:100%;height:200px;object-fit:cover;background:var(--gray-100)}
+.card-img-ph{width:100%;height:200px;background:linear-gradient(135deg,var(--gray-100),var(--gray-200));display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--gray-400)}
+.card-body{padding:16px}
+.card-badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.badge-buy{background:#dbeafe;color:#1d4ed8} .badge-rent{background:#fef3c7;color:#92400e} .badge-both{background:#ede9fe;color:#5b21b6}
+.badge-new{background:#dcfce7;color:#166534} .badge-good{background:#fef9c3;color:#713f12} .badge-fair{background:#fee2e2;color:#991b1b}
+.badge-available{background:#dcfce7;color:#166534} .badge-rented{background:#fef3c7;color:#92400e} .badge-sold{background:var(--gray-100);color:var(--gray-500)}
+.badge-pending{background:#fef3c7;color:#92400e} .badge-confirmed{background:#dbeafe;color:#1d4ed8} .badge-completed{background:#dcfce7;color:#166534} .badge-cancelled{background:#fee2e2;color:#991b1b} .badge-active{background:#dcfce7;color:#166534}
+.card-title{font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:4px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-meta{font-size:.8rem;color:var(--gray-500);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.card-price{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.price-sale{font-size:1.15rem;font-weight:800;color:var(--green)} .price-rent{font-size:.9rem;font-weight:600;color:var(--warning)}
+.card-footer{padding:12px 16px;border-top:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.seller-info{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--gray-600)}
+.seller-av{width:26px;height:26px;border-radius:50%;background:var(--green-light);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;flex-shrink:0}
+.stars{color:var(--warning);font-size:.8rem}
+.empty-state{text-align:center;padding:80px 20px;color:var(--gray-400)}
+.empty-state .icon{font-size:4rem;margin-bottom:16px} .empty-state h3{font-size:1.2rem;color:var(--gray-600);margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:8px;font-size:.9rem;font-weight:600;transition:var(--transition)}
+.btn-primary{background:var(--green);color:#fff} .btn-primary:hover{background:var(--green-dark)}
+.btn-outline{background:#fff;color:var(--green);border:1.5px solid var(--green)} .btn-outline:hover{background:var(--green-light)}
+.btn-danger{background:var(--danger);color:#fff} .btn-danger:hover{background:#b91c1c}
+.btn-gray{background:var(--gray-100);color:var(--gray-700)} .btn-gray:hover{background:var(--gray-200)}
+.btn-sm{padding:7px 14px;font-size:.82rem} .btn-lg{padding:14px 32px;font-size:1rem;border-radius:10px}
+.btn-block{width:100%} .btn:disabled{opacity:.5;cursor:not-allowed}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:.875rem;font-weight:600;color:var(--gray-700);margin-bottom:6px}
+.form-control{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:8px;background:#fff;color:var(--gray-800);font-size:.9rem;transition:var(--transition)}
+.form-control:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,132,61,.1)}
+.form-control::placeholder{color:var(--gray-400)}
+.form-hint{font-size:.78rem;color:var(--gray-400);margin-top:4px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fsect{font-size:.8rem;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--gray-200)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.modal-header{padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:1.3rem;font-weight:800}
+.modal-close{width:32px;height:32px;border-radius:50%;background:var(--gray-100);color:var(--gray-600);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:var(--transition)} .modal-close:hover{background:var(--gray-200)}
+.modal-body{padding:20px 24px 28px}
+.modal-tabs{display:flex;border-bottom:2px solid var(--gray-200);margin-bottom:22px}
+.modal-tab{padding:10px 20px;font-weight:600;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-2px;transition:var(--transition);cursor:pointer} .modal-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.detail-grid{display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start}
+@media(max-width:900px){.detail-grid{grid-template-columns:1fr}}
+.detail-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--radius);background:var(--gray-100)}
+.detail-thumbs{display:flex;gap:8px;margin-top:10px}
+.thumb{width:72px;height:54px;object-fit:cover;border-radius:8px;cursor:pointer;opacity:.6;border:2px solid transparent;transition:var(--transition)} .thumb.active,.thumb:hover{opacity:1;border-color:var(--green)}
+.detail-side-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;position:sticky;top:80px;box-shadow:var(--shadow-sm)}
+.price-block label{font-size:.75rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px}
+.price-block .amount{font-size:1.6rem;font-weight:800;color:var(--green)}
+.price-block.rent .amount{color:var(--warning)}
+.seller-card{display:flex;align-items:center;gap:14px;padding:16px;background:var(--gray-50);border-radius:10px;margin-bottom:20px}
+.seller-av-lg{width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0}
+.dash-grid{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start}
+@media(max-width:768px){.dash-grid{grid-template-columns:1fr}}
+.dash-sidebar{background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200);overflow:hidden;position:sticky;top:80px}
+.dash-user-info{padding:24px;background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;text-align:center}
+.dash-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;margin:0 auto 12px}
+.dash-nav{padding:8px}
+.dash-nav-item{padding:10px 16px;border-radius:8px;font-size:.9rem;font-weight:600;color:var(--gray-600);display:flex;align-items:center;gap:10px;transition:var(--transition);cursor:pointer;margin-bottom:2px}
+.dash-nav-item:hover{background:var(--gray-100);color:var(--gray-900)} .dash-nav-item.active{background:var(--green-light);color:var(--green)}
+.dash-panel{display:none} .dash-panel.active{display:block}
+.dash-title{font-size:1.3rem;font-weight:800;color:var(--gray-900);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.stat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:600px){.stat-cards{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:20px}
+.stat-card .icon{font-size:1.8rem;margin-bottom:8px} .stat-card .value{font-size:2rem;font-weight:800} .stat-card .label{font-size:.8rem;color:var(--gray-500);font-weight:600}
+.table-wrap{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+thead th{padding:12px 16px;background:var(--gray-50);font-weight:700;color:var(--gray-600);text-align:left;border-bottom:1px solid var(--gray-200);font-size:.8rem;text-transform:uppercase;letter-spacing:.4px}
+tbody td{padding:14px 16px;border-bottom:1px solid var(--gray-100);color:var(--gray-700)}
+tbody tr:last-child td{border-bottom:none} tbody tr:hover{background:var(--gray-50)}
+.date-range{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.star-input{display:flex;gap:4px;flex-direction:row-reverse;justify-content:flex-end}
+.star-input input{display:none}
+.star-input label{font-size:1.8rem;cursor:pointer;color:var(--gray-300);transition:var(--transition)}
+.star-input input:checked~label,.star-input label:hover,.star-input label:hover~label{color:var(--warning)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--gray-500);margin-bottom:20px}
+.breadcrumb a{color:var(--green);cursor:pointer} .breadcrumb a:hover{text-decoration:underline}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.section-header h2{font-size:1.4rem;font-weight:800} .section-header a{font-size:.88rem;color:var(--green);font-weight:600;cursor:pointer}
+@media(max-width:640px){.form-row{grid-template-columns:1fr}.page-container{padding:20px 16px}}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="showPage('home')">
+      <div class="flag">☪</div>EquiPoint
+    </div>
+    <div class="nav-search">
+      <span class="si">🔍</span>
+      <input type="text" id="nav-search-input" placeholder="Search laptops, textbooks, bikes…"
+        oninput="handleNavSearch()" onkeydown="if(event.key==='Enter')showPage('browse')">
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn ghost" onclick="showPage('browse')">Browse</button>
+      <div id="nav-guest">
+        <button class="nav-btn outlined" onclick="openAuthModal('login')">Sign In</button>
+        <button class="nav-btn primary" onclick="openAuthModal('register')">Register</button>
+      </div>
+      <div id="nav-user" style="display:none;align-items:center;gap:8px">
+        <button class="nav-btn ghost" onclick="showPage('list-item')">+ List Item</button>
+        <button class="nav-btn outlined" onclick="showPage('dashboard')">Dashboard</button>
+        <div class="nav-avatar" id="nav-avatar" onclick="showPage('dashboard')">?</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">🇵🇰 Pakistan's University Marketplace</div>
+      <h1>Buy, Sell &amp; Rent <span>Anything</span><br>With Your Campus Community</h1>
+      <p>Trusted platform for students across Pakistan's top universities</p>
+      <div class="hero-actions">
+        <button class="hero-btn main" onclick="showPage('browse')">Explore Marketplace</button>
+        <button class="hero-btn outline" onclick="openAuthModal('register')">List Your Item Free</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong id="stat-listings">—</strong><span>Active Listings</span></div>
+        <div class="hero-stat"><strong id="stat-unis">—</strong><span>Universities</span></div>
+        <div class="hero-stat"><strong>12</strong><span>Categories</span></div>
+      </div>
+    </div>
+  </section>
+  <div class="cat-section">
+    <div class="cat-strip" id="home-cats">
+      <div class="cat-chip active" onclick="browseCategory(null,this)">All</div>
+    </div>
+  </div>
+  <div class="page-container">
+    <div class="section-header">
+      <h2>🔥 Recent Listings</h2>
+      <a onclick="showPage('browse')">See all →</a>
+    </div>
+    <div class="products-grid" id="home-products"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- BROWSE -->
+<div id="page-browse" class="page">
+  <div class="page-container">
+    <div class="section-header"><h2>🛍 Marketplace</h2></div>
+    <div class="filter-bar">
+      <select id="filter-type" onchange="applyFilters()">
+        <option value="">All Types</option>
+        <option value="Buy">For Sale</option>
+        <option value="Rent">For Rent</option>
+      </select>
+      <select id="filter-cat" onchange="applyFilters()"><option value="">All Categories</option></select>
+      <select id="filter-cond" onchange="applyFilters()">
+        <option value="">All Conditions</option>
+        <option>New</option><option>Like New</option><option>Good</option><option>Fair</option><option>Poor</option>
+      </select>
+      <select id="filter-uni" onchange="applyFilters()"><option value="">All Universities</option></select>
+      <span class="filter-count" id="filter-count">Loading…</span>
+    </div>
+    <div class="products-grid" id="browse-products"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <div class="page-container">
+    <div class="breadcrumb">
+      <a onclick="showPage('browse')">Marketplace</a>
+      <span>›</span><span id="detail-bc">Item</span>
+    </div>
+    <div class="detail-grid">
+      <div>
+        <img id="detail-main-img" class="detail-img" src="" alt="" onerror="this.src='https://placehold.co/600x450/e5e7eb/9ca3af?text=No+Image'">
+        <div class="detail-thumbs" id="detail-thumbs"></div>
+        <div style="margin-top:28px">
+          <div class="card-badges" id="detail-badges"></div>
+          <h1 id="detail-title" style="margin-top:8px;font-size:1.6rem;font-weight:800"></h1>
+          <div class="card-meta" id="detail-meta"></div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px" id="detail-prices"></div>
+          <p style="font-size:.93rem;color:var(--gray-600);line-height:1.7;margin-bottom:24px" id="detail-desc"></p>
+          <div id="detail-specs" style="display:none;background:var(--gray-50);border-radius:10px;padding:16px;margin-bottom:20px">
+            <div class="fsect" style="margin-bottom:10px">Specifications</div>
+            <div id="detail-specs-content"></div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-side-card">
+        <div class="seller-card" id="detail-seller"></div>
+        <div style="display:flex;flex-direction:column;gap:10px" id="detail-actions"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST ITEM -->
+<div id="page-list-item" class="page">
+  <div class="page-container" style="max-width:680px;margin:0 auto">
+    <div class="breadcrumb"><a onclick="showPage('dashboard')">Dashboard</a><span>›</span><span>List New Item</span></div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:32px">
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:8px">List an Item</h2>
+      <p style="color:var(--gray-500);font-size:.9rem;margin-bottom:28px">Fill in the details below to post your listing.</p>
+      <form id="list-form" onsubmit="submitListing(event)">
+        <div class="fsect">Basic Info</div>
+        <div class="form-group">
+          <label class="form-label">Title *</label>
+          <input class="form-control" name="title" placeholder="e.g. Dell Laptop Core i5 8th Gen" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Category *</label>
+            <select class="form-control" name="category" onchange="showCatSpecs(this.value)" required>
+              <option value="">Select category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Condition *</label>
+            <select class="form-control" name="condition" required>
+              <option value="">Select</option>
+              <option>New</option><option>Like New</option><option>Good</option><option>Fair</option><option>Poor</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="4" placeholder="Describe your item in detail…"></textarea>
+        </div>
+        <div class="fsect">Listing Type &amp; Pricing</div>
+        <div class="form-group">
+          <label class="form-label">Listing Type *</label>
+          <select class="form-control" name="listing_type" onchange="togglePriceFields(this.value)" required>
+            <option value="">Select type</option>
+            <option value="Buy">For Sale Only</option>
+            <option value="Rent">For Rent Only</option>
+            <option value="Both">Both (Sale &amp; Rent)</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group" id="field-sale" style="display:none">
+            <label class="form-label">Sale Price (PKR) *</label>
+            <input class="form-control" name="sale_price" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group" id="field-rent" style="display:none">
+            <label class="form-label">Rent / Day (PKR) *</label>
+            <input class="form-control" name="price_per_day" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group" id="field-sec" style="display:none">
+            <label class="form-label">Security Deposit (PKR)</label>
+            <input class="form-control" name="security_dep" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <div id="specs-electronics" class="hidden">
+          <div class="fsect">Electronics Specs</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Brand</label><input class="form-control" name="spec_brand" placeholder="e.g. Dell, Samsung"></div>
+            <div class="form-group"><label class="form-label">Wattage</label><input class="form-control" name="spec_wattage" placeholder="e.g. 65W"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Voltage</label><input class="form-control" name="spec_voltage" placeholder="e.g. 220V"></div>
+            <div class="form-group"><label class="form-label">Battery Type</label><input class="form-control" name="spec_battery" placeholder="e.g. Li-ion"></div>
+          </div>
+        </div>
+        <div id="specs-tools" class="hidden">
+          <div class="fsect">Tools Specs</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Tool Type</label><input class="form-control" name="spec_tool_type" placeholder="e.g. Power Drill"></div>
+            <div class="form-group"><label class="form-label">Power Source</label><input class="form-control" name="spec_power_source" placeholder="e.g. Electric"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Weight (kg)</label><input class="form-control" name="spec_weight" type="number" step="0.01" placeholder="0.00"></div>
+        </div>
+        <div id="specs-vehicles" class="hidden">
+          <div class="fsect">Vehicle Specs</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Frame Size</label><input class="form-control" name="spec_frame_size" placeholder="e.g. 26 inch"></div>
+            <div class="form-group"><label class="form-label">Fuel Type</label><input class="form-control" name="spec_fuel_type" placeholder="e.g. Petrol"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Gear Count</label><input class="form-control" name="spec_gear_count" type="number" placeholder="e.g. 21"></div>
+        </div>
+        <div class="fsect" style="margin-top:4px">Image</div>
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input class="form-control" name="image_url" placeholder="https://… (optional)">
+          <div class="form-hint">Paste a direct image link</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:8px">📦 Publish Listing</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="page-container">
+    <div class="dash-grid">
+      <div class="dash-sidebar">
+        <div class="dash-user-info">
+          <div class="dash-avatar" id="dash-avatar">?</div>
+          <div style="font-weight:700;font-size:1rem" id="dash-name">—</div>
+          <div style="font-size:.8rem;opacity:.8;margin-top:2px" id="dash-email">—</div>
+          <div style="font-size:.8rem;margin-top:6px;background:rgba(255,255,255,.15);padding:3px 12px;border-radius:12px;display:inline-block" id="dash-uni">—</div>
+        </div>
+        <div class="dash-nav">
+          <div class="dash-nav-item active" onclick="switchPanel('overview',this)">📊 Overview</div>
+          <div class="dash-nav-item" onclick="switchPanel('listings',this)">📦 My Listings</div>
+          <div class="dash-nav-item" onclick="switchPanel('rentals',this)">🔑 My Rentals</div>
+          <div class="dash-nav-item" onclick="switchPanel('orders',this)">🛒 My Orders</div>
+          <div class="dash-nav-item" onclick="switchPanel('sales',this)">💰 My Sales</div>
+          <div class="dash-nav-item" onclick="switchPanel('profile',this)">👤 Profile</div>
+          <div class="dash-nav-item" onclick="logout()" style="color:var(--danger);margin-top:8px">🚪 Sign Out</div>
+        </div>
+      </div>
+      <div>
+        <div class="dash-panel active" id="panel-overview">
+          <div class="dash-title">Overview</div>
+          <div class="stat-cards">
+            <div class="stat-card"><div class="icon">📦</div><div class="value" id="ov-listings">—</div><div class="label">My Listings</div></div>
+            <div class="stat-card"><div class="icon">🔑</div><div class="value" id="ov-rentals">—</div><div class="label">Active Rentals</div></div>
+            <div class="stat-card"><div class="icon">🛒</div><div class="value" id="ov-orders">—</div><div class="label">Orders</div></div>
+          </div>
+          <div class="section-header"><h2>Recent Listings</h2><a onclick="switchPanel('listings',null)">See all →</a></div>
+          <div id="ov-recent"></div>
+        </div>
+        <div class="dash-panel" id="panel-listings">
+          <div class="dash-title">My Listings<button class="btn btn-primary btn-sm" onclick="showPage('list-item')">+ New</button></div>
+          <div id="my-listings"></div>
+        </div>
+        <div class="dash-panel" id="panel-rentals">
+          <div class="dash-title">Items I'm Renting</div>
+          <div id="my-rentals"></div>
+        </div>
+        <div class="dash-panel" id="panel-orders">
+          <div class="dash-title">My Purchases</div>
+          <div id="my-orders"></div>
+        </div>
+        <div class="dash-panel" id="panel-sales">
+          <div class="dash-title">My Sales</div>
+          <div id="my-sales"></div>
+        </div>
+        <div class="dash-panel" id="panel-profile">
+          <div class="dash-title">Profile</div>
+          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:28px;max-width:500px" id="profile-info"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Welcome to EquiPoint</h2>
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="modal-tab active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="modal-tab" id="tab-reg" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      <form id="login-form" onsubmit="doLogin(event)">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-control" name="email" type="email" placeholder="you@uni.edu.pk" required></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-control" name="password" type="password" placeholder="••••••••" required></div>
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      </form>
+      <form id="reg-form" class="hidden" onsubmit="doRegister(event)">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Full Name *</label><input class="form-control" name="full_name" placeholder="Ahmed Ali" required></div>
+          <div class="form-group"><label class="form-label">Student ID *</label><input class="form-control" name="student_id" placeholder="CS-2021-001" required></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email *</label><input class="form-control" name="email" type="email" placeholder="you@uni.edu.pk" required></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-control" name="phone" type="tel" placeholder="03XX-XXXXXXX"></div>
+        <div class="form-group"><label class="form-label">University *</label><select class="form-control" name="uni_affil" id="reg-uni" required><option value="">Select your university…</option></select></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Password *</label><input class="form-control" name="password" type="password" placeholder="••••••••" required minlength="6"></div>
+          <div class="form-group"><label class="form-label">Confirm *</label><input class="form-control" name="confirm" type="password" placeholder="••••••••" required></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- RENT MODAL -->
+<div id="rent-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h2>📅 Book Rental</h2><button class="modal-close" onclick="closeModal('rent-modal')">✕</button></div>
+    <div class="modal-body">
+      <div id="rent-preview" style="padding:12px;background:var(--gray-50);border-radius:10px;margin-bottom:20px;font-size:.9rem"></div>
+      <form id="rent-form" onsubmit="submitRental(event)">
+        <div class="date-range">
+          <div class="form-group"><label class="form-label">Start Date *</label><input class="form-control" id="rent-start" type="date" required oninput="updateRentCost()"></div>
+          <div class="form-group"><label class="form-label">End Date *</label><input class="form-control" id="rent-end" type="date" required oninput="updateRentCost()"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Payment Method</label>
+          <select class="form-control" id="rent-method"><option>Cash</option><option>EasyPaisa</option><option>JazzCash</option><option>Bank Transfer</option></select>
+        </div>
+        <div id="rent-cost" style="background:var(--green-light);border:1px solid var(--green);border-radius:8px;padding:12px;font-size:.9rem;margin-bottom:16px;display:none"></div>
+        <button type="submit" class="btn btn-primary btn-block">Confirm Rental</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- BUY MODAL -->
+<div id="buy-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h2>🛒 Confirm Purchase</h2><button class="modal-close" onclick="closeModal('buy-modal')">✕</button></div>
+    <div class="modal-body">
+      <div id="buy-preview" style="padding:16px;background:var(--gray-50);border-radius:10px;margin-bottom:20px"></div>
+      <form id="buy-form" onsubmit="submitPurchase(event)">
+        <div class="form-group"><label class="form-label">Payment Method</label>
+          <select class="form-control" id="buy-method"><option>Cash</option><option>EasyPaisa</option><option>JazzCash</option><option>Bank Transfer</option></select>
+        </div>
+        <p style="font-size:.85rem;color:var(--gray-500);margin-bottom:16px">By confirming, you agree to contact the seller to complete payment and exchange.</p>
+        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div id="review-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header"><h2>⭐ Leave a Review</h2><button class="modal-close" onclick="closeModal('review-modal')">✕</button></div>
+    <div class="modal-body">
+      <form id="review-form" onsubmit="submitReview(event)">
+        <div class="form-group">
+          <label class="form-label">Rating *</label>
+          <div class="star-input">
+            <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
+            <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
+            <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
+            <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
+            <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Comment</label><textarea class="form-control" id="review-comment" rows="3" placeholder="Share your experience…"></textarea></div>
+        <button type="submit" class="btn btn-primary btn-block">Submit Review</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='/api';
+let user=null, token=localStorage.getItem('um_token')||null;
+let universities=[], categories=[], currentItem=null, currentRentalId=null, searchTimer=null;
+const ICONS={Electronics:'💻',Tools:'🔧',Vehicles:'🚲',Textbooks:'📚',Furniture:'🪑',Clothing:'👕',Sports:'⚽',Stationery:'✏️',Food:'🍔',Tutoring:'🎓',Transport:'🚌',Misc:'📦'};
+
+async function api(path,opts={}){
+  const h={'Content-Type':'application/json'};
+  if(token)h['Authorization']='Bearer '+token;
+  const r=await fetch(API+path,{headers:h,...opts});
+  const d=await r.json();
+  return{ok:r.ok,status:r.status,data:d};
+}
+const apiGet=p=>api(p,{method:'GET'});
+const apiPost=(p,b)=>api(p,{method:'POST',body:JSON.stringify(b)});
+const apiPut=(p,b)=>api(p,{method:'PUT',body:JSON.stringify(b)});
+
+function toast(msg,type='info'){
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;el.textContent=msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>{el.style.animation='fadeOut .4s ease forwards';setTimeout(()=>el.remove(),400);},3500);
+}
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(n){return Number(n).toLocaleString('en-PK',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function emptyState(icon,title,sub=''){return`<div class="empty-state"><div class="icon">${icon}</div><h3>${title}</h3><p>${sub}</p></div>`;}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+function badgeClass(s){const m={'Like New':'new','New':'new','Good':'good','Fair':'fair','Poor':'fair','Available':'available','Rented':'rented','Sold':'sold','Buy':'buy','Rent':'rent','Both':'both','Pending':'pending','Confirmed':'confirmed','Completed':'completed','Cancelled':'cancelled','Active':'active'};return'badge badge-'+(m[s]||s.toLowerCase());}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);
+  if(pg){pg.classList.add('active');window.scrollTo(0,0);}
+  if(name==='browse')loadBrowse();
+  if(name==='home')loadHome();
+  if(name==='dashboard'){if(!user){openAuthModal('login');return;}loadDashboard();}
+  if(name==='list-item'){if(!user){openAuthModal('login');return;}loadListForm();}
+}
+
+async function initAuth(){
+  if(!token)return;
+  const r=await apiGet('/auth/me');
+  if(r.ok){user=r.data.data;updateNav();}
+  else{token=null;localStorage.removeItem('um_token');}
+}
+
+function updateNav(){
+  const g=document.getElementById('nav-guest'),u=document.getElementById('nav-user');
+  if(user){
+    g.classList.add('hidden');u.style.display='flex';
+    document.getElementById('nav-avatar').textContent=user.full_name.charAt(0).toUpperCase();
+  }else{g.classList.remove('hidden');u.style.display='none';}
+}
+
+function openAuthModal(tab){document.getElementById('auth-modal').classList.remove('hidden');switchAuthTab(tab);}
+function closeAuthModal(){document.getElementById('auth-modal').classList.add('hidden');}
+function switchAuthTab(tab){
+  const lf=document.getElementById('login-form'),rf=document.getElementById('reg-form');
+  const tl=document.getElementById('tab-login'),tr=document.getElementById('tab-reg');
+  if(tab==='login'){lf.classList.remove('hidden');rf.classList.add('hidden');tl.classList.add('active');tr.classList.remove('active');}
+  else{lf.classList.add('hidden');rf.classList.remove('hidden');tl.classList.remove('active');tr.classList.add('active');}
+}
+
+async function doLogin(e){
+  e.preventDefault();const fd=new FormData(e.target);
+  const r=await apiPost('/auth/login',{email:fd.get('email'),password:fd.get('password')});
+  if(r.ok){token=r.data.data.token;user=r.data.data.user;localStorage.setItem('um_token',token);updateNav();closeAuthModal();toast('Welcome back, '+user.full_name+'! 👋','success');e.target.reset();}
+  else toast(r.data.message||'Login failed','error');
+}
+
+async function doRegister(e){
+  e.preventDefault();const fd=new FormData(e.target);
+  if(fd.get('password')!==fd.get('confirm')){toast('Passwords do not match','error');return;}
+  const r=await apiPost('/auth/register',{full_name:fd.get('full_name'),email:fd.get('email'),student_id:fd.get('student_id'),uni_affil:parseInt(fd.get('uni_affil')),phone:fd.get('phone'),password:fd.get('password')});
+  if(r.ok){token=r.data.data.token;user=r.data.data.user;localStorage.setItem('um_token',token);updateNav();closeAuthModal();toast('Welcome to EquiPoint! 🎉','success');e.target.reset();}
+  else toast(r.data.message||'Registration failed','error');
+}
+
+function logout(){token=null;user=null;localStorage.removeItem('um_token');updateNav();showPage('home');toast('Signed out','info');}
+
+async function loadUniversities(){
+  const r=await apiGet('/auth/universities');
+  if(!r.ok)return;
+  universities=r.data.data||[];
+  const sel=document.getElementById('reg-uni'),fu=document.getElementById('filter-uni');
+  universities.forEach(u=>{
+    sel.appendChild(new Option(u.name+' — '+u.city,u.uni_id));
+    fu.appendChild(new Option(u.name,u.uni_id));
+  });
+  document.getElementById('stat-unis').textContent=universities.length;
+}
+
+async function loadCategories(){
+  const r=await apiGet('/products/categories');
+  if(!r.ok)return;
+  categories=r.data.data||[];
+  const fc=document.getElementById('filter-cat'),fs=document.querySelector('[name="category"]'),strip=document.getElementById('home-cats');
+  categories.forEach(c=>{
+    fc.appendChild(new Option(`${ICONS[c.name]||'📦'} ${c.name}`,c.id));
+    fs.appendChild(new Option(`${ICONS[c.name]||'📦'} ${c.name}`,c.id));
+    const chip=document.createElement('div');
+    chip.className='cat-chip';chip.textContent=(ICONS[c.name]||'📦')+' '+c.name;
+    chip.onclick=()=>browseCategory(c.id,chip);strip.appendChild(chip);
+  });
+}
+
+function browseCategory(catId,chip){
+  document.querySelectorAll('#home-cats .cat-chip').forEach(c=>c.classList.remove('active'));
+  if(chip)chip.classList.add('active');
+  showPage('browse');
+  document.getElementById('filter-cat').value=catId||'';
+  applyFilters();
+}
+
+async function loadHome(){
+  const r=await apiGet('/products/?');
+  const grid=document.getElementById('home-products');
+  if(r.ok){
+    const items=(r.data.data.items||[]).slice(0,8);
+    document.getElementById('stat-listings').textContent=r.data.data.total;
+    grid.innerHTML=items.length?items.map(renderCard).join(''):emptyState('📭','No listings yet');
+  }else grid.innerHTML=emptyState('⚠️','Could not load','Make sure the backend is running on port 5000');
+}
+
+async function loadBrowse(){
+  const params=new URLSearchParams();
+  const type=document.getElementById('filter-type')?.value;
+  const cat=document.getElementById('filter-cat')?.value;
+  const cond=document.getElementById('filter-cond')?.value;
+  const uni=document.getElementById('filter-uni')?.value;
+  const q=document.getElementById('nav-search-input')?.value;
+  if(type)params.set('listing_type',type);
+  if(cat)params.set('category',cat);
+  if(cond)params.set('condition',cond);
+  if(uni)params.set('university',uni);
+  if(q)params.set('search',q);
+  const grid=document.getElementById('browse-products');
+  grid.innerHTML='<div class="spinner"></div>';
+  const r=await apiGet('/products/?'+params.toString());
+  if(r.ok){
+    const items=r.data.data.items||[];
+    document.getElementById('filter-count').textContent=r.data.data.total+' listing'+(r.data.data.total!==1?'s':'')+' found';
+    grid.innerHTML=items.length?items.map(renderCard).join(''):emptyState('🔍','No results','Try adjusting your filters');
+  }else grid.innerHTML=emptyState('⚠️','Failed to load');
+}
+
+function applyFilters(){loadBrowse();}
+function handleNavSearch(){clearTimeout(searchTimer);searchTimer=setTimeout(()=>{if(document.querySelector('.page.active')?.id==='page-browse')loadBrowse();},400);}
+
+function renderCard(item){
+  const icon=ICONS[item.category]||'📦';
+  const imgEl=item.primary_image
+    ?`<img class="card-img" src="${esc(item.primary_image)}" alt="${esc(item.title)}" onerror="this.parentElement.innerHTML='<div class=card-img-ph>${icon}</div>'">`
+    :`<div class="card-img-ph">${icon}</div>`;
+  const stars='★'.repeat(Math.round(item.owner?.avg_rating||0))+'☆'.repeat(5-Math.round(item.owner?.avg_rating||0));
+  const typeLabel={Buy:'For Sale',Rent:'For Rent',Both:'Sale & Rent'}[item.listing_type]||item.listing_type;
+  let priceHtml='';
+  if(item.sale_price>0)priceHtml+=`<span class="price-sale">PKR ${fmt(item.sale_price)}</span>`;
+  if(item.price_per_day>0)priceHtml+=`<span class="price-rent">PKR ${fmt(item.price_per_day)}/day</span>`;
+  return`<div class="product-card" onclick="openItem(${item.item_id})">
+    ${imgEl}
+    <div class="card-body">
+      <div class="card-badges"><span class="${badgeClass(item.listing_type)}">${typeLabel}</span><span class="${badgeClass(item.condition)}">${esc(item.condition)}</span></div>
+      <div class="card-title">${esc(item.title)}</div>
+      <div class="card-meta"><span>📍 ${esc(item.location||'—')}</span><span>• ${esc(item.category)}</span></div>
+      <div class="card-price">${priceHtml||'<span style="color:var(--gray-400);font-size:.9rem">Price on request</span>'}</div>
+    </div>
+    <div class="card-footer">
+      <div class="seller-info"><div class="seller-av">${(item.owner?.full_name||'?').charAt(0).toUpperCase()}</div><span>${esc(item.owner?.full_name||'Unknown')}</span></div>
+      <div class="stars">${stars}</div>
+    </div>
+  </div>`;
+}
+
+async function openItem(id){
+  showPage('detail');
+  document.getElementById('detail-title').textContent='Loading…';
+  const r=await apiGet('/products/'+id);
+  if(!r.ok){toast('Failed to load item','error');return;}
+  currentItem=r.data.data;renderDetail(currentItem);
+}
+
+function renderDetail(item){
+  document.getElementById('detail-bc').textContent=item.title;
+  document.title=item.title+' — EquiPoint';
+  const imgs=item.images?.length?item.images:[{image_url:'https://placehold.co/600x450/e5e7eb/9ca3af?text=No+Image',is_primary:true}];
+  document.getElementById('detail-main-img').src=imgs.find(i=>i.is_primary)?.image_url||imgs[0].image_url;
+  const thumbs=document.getElementById('detail-thumbs');
+  thumbs.innerHTML=imgs.length>1?imgs.map((img,i)=>`<img class="thumb ${i===0?'active':''}" src="${esc(img.image_url)}" onclick="selThumb(this,'${esc(img.image_url)}')" onerror="this.style.display='none'">`).join(''):'';
+  const typeLabel={Buy:'For Sale',Rent:'For Rent',Both:'Sale & Rent'}[item.listing_type]||item.listing_type;
+  document.getElementById('detail-badges').innerHTML=`<span class="${badgeClass(item.listing_type)}">${typeLabel}</span><span class="${badgeClass(item.condition)}">${esc(item.condition)}</span><span class="${badgeClass(item.avail_status)}">${esc(item.avail_status)}</span>`;
+  document.getElementById('detail-title').textContent=item.title;
+  document.getElementById('detail-meta').innerHTML=`<span>📍 ${esc(item.location||'—')}</span><span>•</span><span>${esc(item.category)}</span><span>•</span><span>🕐 ${new Date(item.listed_at).toLocaleDateString()}</span>`;
+  let ph='';
+  if(item.sale_price>0)ph+=`<div class="price-block"><label>Sale Price</label><div class="amount">PKR ${fmt(item.sale_price)}</div></div>`;
+  if(item.price_per_day>0)ph+=`<div class="price-block rent"><label>Rent / Day</label><div class="amount">PKR ${fmt(item.price_per_day)}</div></div>`;
+  if(item.security_dep>0)ph+=`<div class="price-block"><label>Security Deposit</label><div class="amount" style="font-size:1.1rem;color:var(--gray-700)">PKR ${fmt(item.security_dep)}</div></div>`;
+  document.getElementById('detail-prices').innerHTML=ph||'<span style="color:var(--gray-400)">Contact seller for price</span>';
+  document.getElementById('detail-desc').textContent=item.description||'No description provided.';
+  if(item.specs){
+    document.getElementById('detail-specs').style.display='block';
+    document.getElementById('detail-specs-content').innerHTML=Object.entries(item.specs).filter(([,v])=>v!=null).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:.88rem;border-bottom:1px solid var(--gray-200)"><span style="color:var(--gray-500)">${k.replace(/_/g,' ')}</span><span style="font-weight:600">${esc(String(v))}</span></div>`).join('');
+  }else document.getElementById('detail-specs').style.display='none';
+  const s=item.owner||{};const stars='★'.repeat(Math.round(s.avg_rating||0))+'☆'.repeat(5-Math.round(s.avg_rating||0));
+  document.getElementById('detail-seller').innerHTML=`<div class="seller-av-lg">${(s.full_name||'?').charAt(0).toUpperCase()}</div><div><div style="font-weight:700">${esc(s.full_name||'Unknown')}</div><div style="font-size:.82rem;color:var(--warning);margin-top:2px">${stars} <span style="color:var(--gray-500)">${(s.avg_rating||0).toFixed(1)}</span></div></div>`;
+  const actions=document.getElementById('detail-actions');
+  const isOwner=user&&user.user_id===item.owner_id, isAvail=item.avail_status==='Available';
+  if(isOwner)actions.innerHTML=`<div style="padding:12px;background:var(--gray-50);border-radius:8px;text-align:center;color:var(--gray-500)">This is your listing</div>`;
+  else if(!isAvail)actions.innerHTML=`<div style="padding:12px;background:#fee2e2;border-radius:8px;text-align:center;color:var(--danger);font-weight:600">Item Not Available</div>`;
+  else if(!user)actions.innerHTML=`<button class="btn btn-primary btn-block" onclick="openAuthModal('login')">Sign in to Purchase / Rent</button>`;
+  else{let btns='';
+    if(item.listing_type==='Buy'||item.listing_type==='Both')btns+=`<button class="btn btn-primary btn-block" onclick="openBuyModal()">🛒 Buy Now — PKR ${fmt(item.sale_price)}</button>`;
+    if(item.listing_type==='Rent'||item.listing_type==='Both')btns+=`<button class="btn btn-outline btn-block" onclick="openRentModal()">📅 Rent This Item</button>`;
+    actions.innerHTML=btns;
+  }
+}
+
+function selThumb(el,url){document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById('detail-main-img').src=url;}
+
+function openBuyModal(){
+  if(!user){openAuthModal('login');return;}
+  document.getElementById('buy-preview').innerHTML=`<strong style="font-size:1rem">${esc(currentItem.title)}</strong><div style="margin-top:8px;font-size:1.4rem;font-weight:800;color:var(--green)">PKR ${fmt(currentItem.sale_price)}</div><div style="font-size:.82rem;color:var(--gray-500);margin-top:4px">Seller: ${esc(currentItem.owner?.full_name||'—')}</div>`;
+  document.getElementById('buy-modal').classList.remove('hidden');
+}
+
+async function submitPurchase(e){
+  e.preventDefault();
+  const r=await apiPost('/orders/buy',{item_id:currentItem.item_id,payment_method:document.getElementById('buy-method').value});
+  closeModal('buy-modal');
+  if(r.ok){toast('Order placed! Contact the seller to complete payment. 🎉','success');currentItem.avail_status='Sold';renderDetail(currentItem);}
+  else toast(r.data.message||'Order failed','error');
+}
+
+function openRentModal(){
+  if(!user){openAuthModal('login');return;}
+  document.getElementById('rent-preview').innerHTML=`<strong>${esc(currentItem.title)}</strong> — PKR ${fmt(currentItem.price_per_day)}/day${currentItem.security_dep>0?` + PKR ${fmt(currentItem.security_dep)} deposit`:''}`;
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('rent-start').value=today;document.getElementById('rent-start').min=today;
+  document.getElementById('rent-end').min=today;document.getElementById('rent-cost').style.display='none';
+  document.getElementById('rent-modal').classList.remove('hidden');
+}
+
+function updateRentCost(){
+  const s=document.getElementById('rent-start').value,e=document.getElementById('rent-end').value;
+  if(!s||!e||!currentItem)return;
+  const days=Math.max(1,Math.ceil((new Date(e)-new Date(s))/86400000));
+  const cost=days*parseFloat(currentItem.price_per_day||0)+parseFloat(currentItem.security_dep||0);
+  const el=document.getElementById('rent-cost');el.style.display='block';
+  el.innerHTML=`<strong>Estimated Total:</strong> PKR ${fmt(cost)} <span style="color:var(--gray-500);font-size:.85rem">(${days} day${days>1?'s':''} x PKR ${fmt(currentItem.price_per_day)}/day${currentItem.security_dep>0?` + PKR ${fmt(currentItem.security_dep)} deposit`:''})</span>`;
+}
+
+async function submitRental(e){
+  e.preventDefault();
+  const s=document.getElementById('rent-start').value,en=document.getElementById('rent-end').value,m=document.getElementById('rent-method').value;
+  if(new Date(en)<=new Date(s)){toast('End date must be after start date','error');return;}
+  const r=await apiPost('/rentals/',{item_id:currentItem.item_id,start_time:s+'T00:00:00',end_time:en+'T23:59:59',method:m});
+  closeModal('rent-modal');
+  if(r.ok){toast('Rental booked! 🔑','success');currentItem.avail_status='Rented';renderDetail(currentItem);}
+  else toast(r.data.message||'Rental failed','error');
+}
+
+function loadListForm(){togglePriceFields('');showCatSpecs('');}
+function togglePriceFields(t){
+  document.getElementById('field-sale').style.display=(t==='Buy'||t==='Both')?'block':'none';
+  document.getElementById('field-rent').style.display=(t==='Rent'||t==='Both')?'block':'none';
+  document.getElementById('field-sec').style.display=(t==='Rent'||t==='Both')?'block':'none';
+}
+function showCatSpecs(cat){
+  ['electronics','tools','vehicles'].forEach(c=>document.getElementById('specs-'+c).classList.add('hidden'));
+  const m={Electronics:'electronics',Tools:'tools',Vehicles:'vehicles'};
+  if(m[cat])document.getElementById('specs-'+m[cat]).classList.remove('hidden');
+}
+
+async function submitListing(e){
+  e.preventDefault();if(!user){openAuthModal('login');return;}
+  const fd=new FormData(e.target),cat=fd.get('category');
+  const specs={};
+  if(cat==='Electronics'){specs.brand=fd.get('spec_brand');specs.voltage=fd.get('spec_voltage');specs.battery_type=fd.get('spec_battery');specs.wattage=fd.get('spec_wattage');}
+  else if(cat==='Tools'){specs.power_source=fd.get('spec_power_source');specs.weight_kg=fd.get('spec_weight');specs.tool_type=fd.get('spec_tool_type');}
+  else if(cat==='Vehicles'){specs.frame_size=fd.get('spec_frame_size');specs.gear_count=fd.get('spec_gear_count');specs.fuel_type=fd.get('spec_fuel_type');}
+  const imgUrl=fd.get('image_url');
+  const body={title:fd.get('title'),description:fd.get('description'),category:cat,condition:fd.get('condition'),listing_type:fd.get('listing_type'),sale_price:parseFloat(fd.get('sale_price')||0),price_per_day:parseFloat(fd.get('price_per_day')||0),security_dep:parseFloat(fd.get('security_dep')||0),images:imgUrl?[imgUrl]:[],specs};
+  const btn=e.target.querySelector('[type=submit]');btn.disabled=true;btn.textContent='Publishing…';
+  const r=await apiPost('/products/',body);
+  btn.disabled=false;btn.textContent='📦 Publish Listing';
+  if(r.ok){toast('Listing published! 🎉','success');e.target.reset();loadListForm();showPage('dashboard');switchPanel('listings',null);}
+  else toast(r.data.message||'Failed to publish','error');
+}
+
+async function loadDashboard(){
+  if(!user)return;
+  document.getElementById('dash-avatar').textContent=user.full_name.charAt(0).toUpperCase();
+  document.getElementById('dash-name').textContent=user.full_name;
+  document.getElementById('dash-email').textContent=user.email;
+  document.getElementById('dash-uni').textContent=user.university?.name||'—';
+  const[lr,rr,or]=await Promise.all([apiGet('/products/?'),apiGet('/rentals/my_rentals'),apiGet('/orders')]);
+  const myItems=(lr.ok?(lr.data.data.items||[]):[]).filter(i=>i.owner_id===user.user_id);
+  const myRentals=rr.ok?(rr.data.data||[]):[];
+  const myOrders=or.ok?(or.data.data||[]):[];
+  document.getElementById('ov-listings').textContent=myItems.length;
+  document.getElementById('ov-rentals').textContent=myRentals.filter(r=>r.status==='Active').length;
+  document.getElementById('ov-orders').textContent=myOrders.length;
+  document.getElementById('ov-recent').innerHTML=myItems.length?`<div class="table-wrap"><table><thead><tr><th>Item</th><th>Type</th><th>Status</th><th>Price</th></tr></thead><tbody>${myItems.slice(0,5).map(i=>`<tr onclick="openItem(${i.item_id})" style="cursor:pointer"><td><strong>${esc(i.title)}</strong></td><td>${esc(i.listing_type)}</td><td><span class="${badgeClass(i.avail_status)}">${esc(i.avail_status)}</span></td><td>${i.sale_price>0?'PKR '+fmt(i.sale_price):i.price_per_day>0?'PKR '+fmt(i.price_per_day)+'/day':'—'}</td></tr>`).join('')}</tbody></table></div>`:emptyState('📦','No listings yet');
+}
+
+function switchPanel(name,el){
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('panel-'+name)?.classList.add('active');
+  if(el)el.classList.add('active');
+  if(name==='listings')loadMyListings();
+  if(name==='rentals')loadMyRentals();
+  if(name==='orders')loadMyOrders();
+  if(name==='sales')loadMySales();
+  if(name==='profile')renderProfile();
+}
+
+async function loadMyListings(){
+  const r=await apiGet('/products/?');
+  const c=document.getElementById('my-listings');
+  if(!r.ok){c.innerHTML=emptyState('⚠️','Error loading');return;}
+  const items=(r.data.data.items||[]).filter(i=>i.owner_id===user.user_id);
+  c.innerHTML=items.length?`<div class="table-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Type</th><th>Status</th><th>Price</th><th>Listed</th></tr></thead><tbody>${items.map(i=>`<tr onclick="openItem(${i.item_id})" style="cursor:pointer"><td><strong>${esc(i.title)}</strong></td><td>${esc(i.category)}</td><td>${esc(i.listing_type)}</td><td><span class="${badgeClass(i.avail_status)}">${esc(i.avail_status)}</span></td><td>${i.sale_price>0?'PKR '+fmt(i.sale_price):i.price_per_day>0?'PKR '+fmt(i.price_per_day)+'/day':'—'}</td><td>${new Date(i.listed_at).toLocaleDateString()}</td></tr>`).join('')}</tbody></table></div>`:emptyState('📦','No listings yet','<button class="btn btn-primary" onclick="showPage(\'list-item\')">+ List Your First Item</button>');
+}
+
+async function loadMyRentals(){
+  const r=await apiGet('/rentals/my_rentals');
+  const c=document.getElementById('my-rentals');
+  if(!r.ok){c.innerHTML=emptyState('⚠️','Error loading');return;}
+  const rentals=r.data.data||[];
+  c.innerHTML=rentals.length?`<div class="table-wrap"><table><thead><tr><th>Item</th><th>Owner</th><th>Start</th><th>End</th><th>Cost</th><th>Status</th><th>Action</th></tr></thead><tbody>${rentals.map(r=>`<tr><td onclick="openItem(${r.item_id})" style="cursor:pointer"><strong>${esc(r.item?.title||'—')}</strong></td><td>${esc(r.owner||'—')}</td><td>${r.start_time?new Date(r.start_time).toLocaleDateString():'—'}</td><td>${r.end_time?new Date(r.end_time).toLocaleDateString():'—'}</td><td>PKR ${fmt(r.total_cost)}</td><td><span class="${badgeClass(r.status)}">${esc(r.status)}</span></td><td>${r.status==='Completed'?`<button class="btn btn-sm btn-outline" onclick="openReviewModal(${r.rental_id})">⭐ Review</button>`:'—'}</td></tr>`).join('')}</tbody></table></div>`:emptyState('🔑','No rentals yet','Browse the marketplace to rent something');
+}
+
+async function loadMyOrders(){
+  const r=await apiGet('/orders');
+  const c=document.getElementById('my-orders');
+  if(!r.ok){c.innerHTML=emptyState('⚠️','Error loading');return;}
+  const orders=r.data.data||[];
+  c.innerHTML=orders.length?`<div class="table-wrap"><table><thead><tr><th>Item</th><th>Seller</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th></tr></thead><tbody>${orders.map(o=>`<tr><td onclick="openItem(${o.item_id})" style="cursor:pointer"><strong>${esc(o.item?.title||'—')}</strong></td><td>${esc(o.seller||'—')}</td><td>PKR ${fmt(o.amount)}</td><td>${esc(o.payment_method)}</td><td><span class="${badgeClass(o.status)}">${esc(o.status)}</span></td><td>${new Date(o.created_at).toLocaleDateString()}</td></tr>`).join('')}</tbody></table></div>`:emptyState('🛒','No orders yet','Buy something from the marketplace');
+}
+
+async function loadMySales(){
+  const r=await apiGet('/orders/selling');
+  const c=document.getElementById('my-sales');
+  if(!r.ok){c.innerHTML=emptyState('⚠️','Error loading');return;}
+  const orders=r.data.data||[];
+  c.innerHTML=orders.length?`<div class="table-wrap"><table><thead><tr><th>Item</th><th>Buyer</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${orders.map(o=>`<tr><td><strong>${esc(o.item?.title||'—')}</strong></td><td>${esc(o.buyer||'—')}</td><td>PKR ${fmt(o.amount)}</td><td><span class="${badgeClass(o.status)}">${esc(o.status)}</span></td><td>${o.status==='Pending'?`<button class="btn btn-sm btn-primary" onclick="updateOrderStatus(${o.order_id},'Confirmed')">Confirm</button>`:o.status==='Confirmed'?`<button class="btn btn-sm btn-primary" onclick="updateOrderStatus(${o.order_id},'Completed')">Complete</button>`:'—'}</td></tr>`).join('')}</tbody></table></div>`:emptyState('💰','No sales yet','List items to start selling');
+}
+
+async function updateOrderStatus(id,status){
+  const r=await apiPut('/orders/'+id+'/status',{status});
+  if(r.ok){toast('Order updated to '+status,'success');loadMySales();}
+  else toast(r.data.message||'Update failed','error');
+}
+
+function renderProfile(){
+  if(!user)return;
+  const stars='★'.repeat(Math.round(user.avg_rating||0))+'☆'.repeat(5-Math.round(user.avg_rating||0));
+  const row=(icon,label,val)=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:.9rem"><span style="color:var(--gray-500)">${icon} ${label}</span><span style="font-weight:600">${esc(String(val))}</span></div>`;
+  document.getElementById('profile-info').innerHTML=`
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;margin:0 auto 12px">${user.full_name.charAt(0).toUpperCase()}</div>
+      <div style="font-size:1.2rem;font-weight:800">${esc(user.full_name)}</div>
+      <div style="color:var(--warning);font-size:1rem;margin-top:4px">${stars} <span style="color:var(--gray-500)">${(user.avg_rating||0).toFixed(1)}</span></div>
+    </div>
+    <div style="display:grid;gap:0">
+      ${row('📧','Email',user.email)}${row('🎓','Student ID',user.student_id)}
+      ${row('🏛️','University',user.university?.name||'—')}${row('📍','City',user.university?.city||'—')}
+      ${row('📱','Phone',user.phone||'Not provided')}${row('🛡️','Role',user.role)}
+      ${row('✅','Status',user.active_status)}${row('📅','Member Since',new Date(user.created_at).toLocaleDateString())}
+    </div>`;
+}
+
+function openReviewModal(rentalId){
+  currentRentalId=rentalId;
+  document.querySelectorAll('#review-form input[name="rating"]').forEach(i=>i.checked=false);
+  document.getElementById('review-comment').value='';
+  document.getElementById('review-modal').classList.remove('hidden');
+}
+
+async function submitReview(e){
+  e.preventDefault();
+  const rating=document.querySelector('#review-form input[name="rating"]:checked')?.value;
+  if(!rating){toast('Please select a rating','error');return;}
+  const r=await apiPost('/reviews/',{rental_id:currentRentalId,rating:parseInt(rating),comment_text:document.getElementById('review-comment').value});
+  closeModal('review-modal');
+  if(r.ok)toast('Review submitted! ⭐','success');
+  else toast(r.data.message||'Review failed','error');
+}
+
+async function init(){
+  await Promise.all([initAuth(),loadUniversities(),loadCategories()]);
+  loadHome();
+  ['auth-modal','rent-modal','buy-modal','review-modal'].forEach(id=>{
+    document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});
+  });
+}
+init();
+</script>
+</body>
+</html>

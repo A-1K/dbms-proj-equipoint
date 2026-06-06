@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: uni_marketplace
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ./uni-marketplace/backend
+      dockerfile: Dockerfile
+    command: python app.py
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/uni_marketplace
+      JWT_SECRET_KEY: change-me-in-production
+      SECRET_KEY: change-me-in-production
+      FLASK_DEBUG: "True"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uni-marketplace/backend:/app
+      - ./uni-marketplace/frontend:/app/../frontend
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -1,0 +1,47 @@
+# Environment & secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Flask uploads
+backend/uploads/
+uploads/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Migration versions (keep the folder, ignore auto-generated files if needed)
+# migrations/versions/  ← leave commented; you usually DO want to commit these
+
+# Logs
+*.log
