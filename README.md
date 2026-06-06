@@ -129,7 +129,6 @@ pip install -r requirements.txt
 
 # 4. Configure environment
 cp .env.example .env
-# Edit .env and set DATABASE_URL, JWT_SECRET_KEY, SECRET_KEY
 
 # 5. Run setup (tables + trigger + seed data)
 python setup.py
