@@ -9,7 +9,7 @@ A full-stack **inter-university equipment marketplace** for Pakistani students, 
 | Layer       | Technology                                      |
 |-------------|--------------------------------------------------|
 | Backend     | ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-3.0-000000?style=flat-square&logo=flask&logoColor=white) <br> *Flask-SQLAlchemy 3.1* |
-| Database    | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=flat-square&logo=postgresql&logoColor=white) <br> *(native ENUMs, triggers, indexes)* |
+| Database    | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?style=flat-square&logo=postgresql&logoColor=white) <br> *(native ENUMs, triggers, indexes)* |
 | Auth        | ![JWT](https://img.shields.io/badge/JWT-HS256-black?style=flat-square&logo=jsonwebtokens&logoColor=white) <br> *Flask-JWT-Extended* |
 | Frontend    | ![JavaScript](https://img.shields.io/badge/Vanilla_JS-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) <br> *(single-page app)* |
 | Dev Tools   | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) ![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white) <br> *Flask-Migrate* |
