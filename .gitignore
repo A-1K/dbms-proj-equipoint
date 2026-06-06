@@ -47,4 +47,4 @@ htmlcov/
 *.log
 
 
-MIGRATION_NOTES
+MIGRATION_NOTES.md
