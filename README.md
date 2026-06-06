@@ -1,4 +1,4 @@
-# UniMarket Pakistan 🎓
+# UniMarket Pakistan
 
 A full-stack **inter-university equipment marketplace** for Pakistani students, built with Flask, PostgreSQL, and vanilla JS. Students can list, rent, and purchase equipment across HEC-recognized universities.
 
