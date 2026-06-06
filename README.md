@@ -90,7 +90,7 @@ Index('idx_item_listed_at',   'listed_at')             # ORDER BY
 ## Quickstart — Docker
 
 ```bash
-git clone https://github.com/<your-username>/unimarket-pk.git
+git clone https://github.com/A-1K/dbms-proj-equipoint
 cd unimarket-pk
 
 docker compose up --build
@@ -119,7 +119,7 @@ Password: admin123
 psql -U postgres -c "CREATE DATABASE uni_marketplace;"
 
 # 2. Clone and enter backend
-git clone https://github.com/<your-username>/unimarket-pk.git
+git clone https://github.com/A-1K/dbms-proj-equipoint
 cd unimarket-pk/uni-marketplace/backend
 
 # 3. Create virtual environment and install dependencies
