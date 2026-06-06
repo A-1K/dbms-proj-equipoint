@@ -120,7 +120,7 @@ psql -U postgres -c "CREATE DATABASE uni_marketplace;"
 
 # 2. Clone and enter backend
 git clone https://github.com/A-1K/dbms-proj-equipoint
-cd unimarket-pk/uni-marketplace/backend
+cd equipoint/equipoint-marketplace/backend
 
 # 3. Create virtual environment and install dependencies
 python -m venv venv
@@ -204,7 +204,7 @@ The project includes `backend/analytics.sql`, containing PostgreSQL queries for 
 ## Running Tests
 
 ```bash
-cd uni-marketplace/backend
+cd equipoint-marketplace/backend
 
 # Set test DB (separate from dev DB)
 export TEST_DATABASE_URL=postgresql://postgres:postgres@localhost:5432/uni_marketplace_test
@@ -219,13 +219,13 @@ Tests cover: health check, university listing, registration (success + duplicate
 ## Project Structure
 
 ```
-unimarket-pk/
+equipoint/
 ├── docker-compose.yml
 ├── docs/
 │   └── erd.svg                    # Entity-Relationship Diagram
 ├── tests/
 │   └── test_api.py                # pytest test suite (25 cases)
-└── uni-marketplace/
+└── equipoint-marketplace/
     ├── backend/
     │   ├── Dockerfile
     │   ├── requirements.txt       # pinned versions
