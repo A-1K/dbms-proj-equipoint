@@ -49,7 +49,6 @@ A full-stack **inter-university equipment marketplace** for Pakistani students, 
 
 ## Database Design Highlights
 
-> This project uses several PostgreSQL-specific features intentionally, not just as a Flask default.
 
 ### Native ENUM Types
 All status/category fields use `CREATE TYPE ... AS ENUM (...)` — enforced at the storage level, not just the application layer. Invalid values are rejected by PostgreSQL itself.
@@ -90,7 +89,7 @@ Index('idx_item_listed_at',   'listed_at')             # ORDER BY
 ## Quickstart — Docker
 
 ```bash
-git clone https://github.com/A-1K/dbms-proj-equipoint
+git clone https://github.com/A-1K/equipoint-campus-marketplace
 cd unimarket-pk
 
 docker compose up --build
@@ -119,7 +118,7 @@ Password: admin123
 psql -U postgres -c "CREATE DATABASE uni_marketplace;"
 
 # 2. Clone and enter backend
-git clone https://github.com/A-1K/dbms-proj-equipoint
+git clone https://github.com/A-1K/equipoint-campus-marketplace
 cd equipoint/equipoint-marketplace/backend
 
 # 3. Create virtual environment and install dependencies
